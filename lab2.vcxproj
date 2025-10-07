@@ -129,7 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ks.h" />
+    <ClInclude Include="logger.h" />
     <ClInclude Include="Pipe.h" />
+    <ClInclude Include="search.h" />
     <ClInclude Include="temp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
