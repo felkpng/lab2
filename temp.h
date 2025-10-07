@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "logger.h"
 
 template<typename T>
 T Enter() {
@@ -9,7 +10,7 @@ T Enter() {
     T value;
 
     while (true) {
-        std::getline(std::cin, enter);
+        enter = LoggedInput();
         std::stringstream ss(enter);
         ss >> value;
 

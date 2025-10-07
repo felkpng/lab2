@@ -9,6 +9,7 @@
 #include "Ks.h"
 #include "temp.h"
 #include "search.h"
+#include "logger.h"
 
 using namespace std;
 
@@ -60,7 +61,7 @@ void EditPipes(map<int, Pipe>& pipes, vector<int> selectedPipes) {
     switch (choice) {
     case 1:
         cout << "Новое имя: ";
-        getline(cin, n);
+        n = Enter<string>();
         for (const auto& x : selectedPipes)
             pipes[x].setName(n);
         break;
@@ -104,7 +105,7 @@ void EditStations(map<int, Ks>& stations, vector<int> selectedStations) {
     switch (choice) {
     case 1:
         cout << "Новое имя: ";
-        getline(cin, n);
+        n = Enter<string>();
         for (const auto& x : selectedStations)
             stations[x].setName(n);
         break;
@@ -124,7 +125,7 @@ void EditStations(map<int, Ks>& stations, vector<int> selectedStations) {
         break;
     case 4:
         cout << "Новый тип: ";
-        getline(cin, n);
+        n = Enter<string>();
 
         for (const auto& x : selectedStations)
             stations[x].setType(n);
@@ -147,7 +148,7 @@ void EditDifferent(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int> se
     switch (choice) {
     case 1:
         cout << "Новое имя: ";
-        getline(cin, n);
+        n = Enter<string>();
         for (const auto& x : selectedPipes)
             pipes[x].setName(n);
         for (const auto& x : selectedStations)
@@ -163,7 +164,7 @@ void EditDifferent(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int> se
     }
 }
 
-void SelectionToGroups(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int> elements, vector<int> selectedPipes, vector<int> selectedStations) {
+void SelectionToGroups(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int> &elements, vector<int> &selectedPipes, vector<int> &selectedStations) {
     for (int i = 0; i < elements.size(); i++) {
         if (pipes.count(elements[i]) > 0)
             selectedPipes.push_back(elements[i]);
@@ -192,16 +193,20 @@ void EditSelection(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int> el
 
     SelectionToGroups(pipes, stations, elements, selectedPipes, selectedStations);
 
-    if (selectedPipes.size() == 0 || selectedStations.size() == 0) {
+    cout << selectedPipes.size() << " " << selectedStations.size() << endl;
+
+    if (selectedPipes.size() == 0 && selectedStations.size() == 0) return; 
+    else if (selectedPipes.size() == 0 || selectedStations.size() == 0) {
         if (selectedPipes.size() > 0)
             EditPipes(pipes, selectedPipes);
         else
             EditStations(stations, selectedStations);
-        system("cls");
-        cout << "Операция выполнена!" << endl;
     }
     else
         EditDifferent(pipes, stations, selectedPipes, selectedStations);
+
+    system("cls");
+    cout << "Операция выполнена!" << endl;
 }
 
 void ShowAll(map<int, Pipe>& Pipes, map<int, Ks>& stations) {
@@ -220,7 +225,7 @@ void ShowAll(map<int, Pipe>& Pipes, map<int, Ks>& stations) {
 
     cout << "Выберите элементы через пробел или нажмите Enter, чтобы вернуться в меню:\n";
     string enter;
-    getline(cin, enter);
+    enter = LoggedInput();
 
     vector<int> elements = Selections(enter);
     if (elements.size() == 0) { return; }
@@ -255,7 +260,10 @@ void Search(map<int, Pipe>& pipes, map<int, Ks>& stations) {
 }
 
 void SaveData(map<int, Pipe>& pipes, map<int, Ks>& stations) {
-    ofstream outFile("data.txt");
+    cout << "Введите имя файла: ";
+    string fileName = Enter<string>();
+
+    ofstream outFile(fileName);
     if (outFile.is_open()) {
         for (const auto& pair : pipes) {
             outFile << "#PIPE" << endl;
@@ -282,10 +290,16 @@ void SaveData(map<int, Pipe>& pipes, map<int, Ks>& stations) {
         system("cls");
         cout << "Сохранено в data.txt" << endl;
     }
+
+    else
+        cout << "Ошибка открытия файла";
 }
 
 void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pres_id) {
-    ifstream inFile("data.txt");
+    cout << "Введите имя файла: ";
+    string fileName = Enter<string>();
+
+    ifstream inFile(fileName);
     if (!inFile.is_open()) {
         std::cout << "Не удалось открыть файл data.txt\n";
         return;
