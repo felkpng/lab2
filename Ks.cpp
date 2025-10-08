@@ -21,9 +21,17 @@ void Ks::fill() {
 
     std::cout << "Количество цехов: ";
     int c = Enter<int>();
+    while (c < 0) {
+        std::cout << "Число должно быть положительным\nПовторите ввод: ";
+        c = Enter<int>();
+    }
 
     std::cout << "Количество цехов в работе: ";
     int w = Enter<int>();
+    while (w > c || w < 0) {
+        std::cout << "Количество не должно превышать общее количество цехов.\nПовторите ввод: ";
+        w = Enter<int>();
+    }
 
     std::cout << "Тип: ";
     std::string t = Enter<std::string>();

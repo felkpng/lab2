@@ -68,6 +68,10 @@ void EditPipes(map<int, Pipe>& pipes, vector<int> selectedPipes) {
     case 2:
         cout << "Новая длина: ";
         l = Enter<float>();
+        while (l <= 0) {
+            std::cout << "Длина должна превышать 0\nПовторите ввод";
+            l = Enter<float>();
+        }
 
         for (const auto& x : selectedPipes)
             pipes[x].setLength(l);
@@ -75,6 +79,10 @@ void EditPipes(map<int, Pipe>& pipes, vector<int> selectedPipes) {
     case 3:
         cout << "Новый диаметр: ";
         d = Enter<int>();
+        while (d <= 0) {
+            std::cout << "Диаметр должен превышать 0\nПовторите ввод";
+            d = Enter<int>();
+        }
 
         for (const auto& x : selectedPipes)
             pipes[x].setDiameter(d);
@@ -99,6 +107,7 @@ void EditStations(map<int, Ks>& stations, vector<int> selectedStations) {
     cout << "\nДействия\n1. Изменить имя\n2. Изменить количество цехов\n3. Изменить количество цехов в работе\n4. Изменить тип\n5. Удалить\n0. Выход в меню\nВыбор: ";
 
     int choice = Enter<int>();
+    int c;
     string n;
     int w;
 
@@ -110,15 +119,34 @@ void EditStations(map<int, Ks>& stations, vector<int> selectedStations) {
             stations[x].setName(n);
         break;
     case 2:
+        c = 0;
+        for (const auto& x : selectedStations)
+            if (stations[x].getWorkshopsWorking() > c)
+                c = stations[x].getWorkshopsWorking();
+
         cout << "Новое количество цехов: ";
         w = Enter<int>();
+        while (w < 0 || w < c) {
+            std::cout << "Число должно быть положительным и больше"<< c << "\nПовторите ввод: ";
+            w = Enter<int>();
+        }
 
         for (const auto& x : selectedStations)
             stations[x].setWorkshopsCount(w);
         break;
     case 3:
+        c = 100000000;
+        for (const auto& x : selectedStations)
+            if (stations[x].getWorkshopsCount() < c)
+                c = stations[x].getWorkshopsCount();
+
         cout << "Новое количество цехов в работе: ";
         w = Enter<int>();
+
+        while (w > c || w < 0) {
+            std::cout << "Количество не должно превышать общее количество цехов. (0 <= count <= " << c << ")\nПовторите ввод : ";
+            w = Enter<int>();
+        }
 
         for (const auto& x : selectedStations)
             stations[x].setWorkshopsWorking(w);
@@ -192,8 +220,6 @@ void EditSelection(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int> el
     vector<int> selectedStations = {};
 
     SelectionToGroups(pipes, stations, elements, selectedPipes, selectedStations);
-
-    cout << selectedPipes.size() << " " << selectedStations.size() << endl;
 
     if (selectedPipes.size() == 0 && selectedStations.size() == 0) return; 
     else if (selectedPipes.size() == 0 || selectedStations.size() == 0) {
@@ -301,7 +327,7 @@ void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pres
 
     ifstream inFile(fileName);
     if (!inFile.is_open()) {
-        std::cout << "Не удалось открыть файл data.txt\n";
+        std::cout << "Не удалось открыть файл " << fileName << endl;
         return;
     }
 

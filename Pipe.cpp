@@ -23,9 +23,17 @@ void Pipe::fill() {
 
     std::cout << "Длина: ";
     float l = Enter<float>();
+    while (l <= 0) {
+        std::cout << "Длина должна превышать 0\nПовторите ввод";
+        l = Enter<float>();
+    }
 
     std::cout << "Диаметр: ";
     int d = Enter<int>();
+    while (d <= 0) {
+        std::cout << "Диаметр должен превышать 0\nПовторите ввод";
+        d = Enter<int>();
+    }
 
     std::cout << "В ремонте (0/1): ";
     bool r = Enter<bool>();
