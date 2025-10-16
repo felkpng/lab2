@@ -13,22 +13,22 @@
 
 using namespace std;
 
-void NewPipe(map<int, Pipe>& Pipes, int & pres_id) {
+void NewPipe(map<int, Pipe>& Pipes, int & pipes_id) {
     Pipe newPipe;
-    newPipe.fill();
+    cin >> newPipe;
 
-    Pipes[pres_id] = newPipe;
-    pres_id++;
+    Pipes[pipes_id] = newPipe;
+    pipes_id++;
 
     system("cls");
 }
 
-void NewKs(map<int, Ks>& stations, int& pres_id) {
+void NewKs(map<int, Ks>& stations, int& stations_id) {
     Ks newKs;
-    newKs.fill();
+    cin >> newKs;
 
-    stations[pres_id] = newKs;
-    pres_id++;
+    stations[stations_id] = newKs;
+    stations_id++;
 
     system("cls");
 }
@@ -204,13 +204,13 @@ void SelectionToGroups(map<int, Pipe>& pipes, map<int, Ks>& stations, vector<int
     cout << "Элементы: ";
     for (const auto& x : selectedPipes) {
         cout << "ID: " << x << endl;
-        pipes[x].show();
+        cout << pipes[x];
         cout << endl;
     }
 
     for (const auto& x : selectedStations) {
         cout << "ID: " << x << endl;
-        stations[x].show();
+        cout << stations[x];
         cout << endl;
     }
 }
@@ -239,13 +239,13 @@ void ShowAll(map<int, Pipe>& Pipes, map<int, Ks>& stations) {
     system("cls");
     for (const auto& pair : Pipes) {
         cout << "ID: " << pair.first << endl;
-        Pipes[pair.first].show();
+        cout << Pipes[pair.first];
         cout << endl;
     }
 
     for (const auto& pair : stations) {
         cout << "ID: " << pair.first << endl;
-        stations[pair.first].show();
+        cout << stations[pair.first];
         cout << endl;
     }
 
@@ -293,12 +293,7 @@ void SaveData(map<int, Pipe>& pipes, map<int, Ks>& stations) {
     if (outFile.is_open()) {
         for (const auto& pair : pipes) {
             outFile << "#PIPE" << endl;
-            outFile << pair.first << endl;
-            outFile << pipes[pair.first].getName() << endl;
-            outFile << pipes[pair.first].getLength() << endl;
-            outFile << pipes[pair.first].getDiameter() << endl;
-            outFile << pipes[pair.first].isRepair() << endl;
-            outFile << endl;
+            outFile << pipes[pair.first] << endl;
         }
 
         for (const auto& pair : stations) {
@@ -321,7 +316,7 @@ void SaveData(map<int, Pipe>& pipes, map<int, Ks>& stations) {
         cout << "Ошибка открытия файла";
 }
 
-void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pres_id) {
+void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pipes_id, int& stations_id) {
     cout << "Введите имя файла: ";
     string fileName = Enter<string>();
 
@@ -335,26 +330,13 @@ void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pres
     while (getline(inFile, line)) {
         if (line == "#PIPE") {
             int id;
-            string name;
-            float length;
-            int diameter;
-            bool repair;
-
-            if (!(inFile >> id)) { cout << "Ошибка ID трубы\n"; return; }
-            inFile.ignore(); // убрать \n
-
-            getline(inFile, name);
-            if (!(inFile >> length)) { cout << "Ошибка длины трубы\n"; return; }
+            if (!(inFile >> id)) { cout << "Ошибка ID станции\n"; return; }
             inFile.ignore();
 
-            if (!(inFile >> diameter)) { cout << "Ошибка диаметра трубы\n"; return; }
-            inFile.ignore();
-
-            getline(inFile, line);
-            repair = (line == "1");
-
-            pipes[id] = Pipe(name, length, diameter, repair);
-            if (id >= pres_id) pres_id = id + 1;
+            Pipe truba;
+            inFile >> truba;
+            pipes[id] = truba;
+            if (id >= pipes_id) pipes_id = id + 1;
         }
 
         else if (line == "#KS") {
@@ -377,7 +359,7 @@ void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pres
             getline(inFile, type);
 
             stations[id] = Ks(name, workshops_count, workshops_working, type);
-            if (id >= pres_id) pres_id = id + 1;
+            if (id >= stations_id) stations_id = id + 1;
         }
     }
 
@@ -385,19 +367,17 @@ void LoadData(std::map<int, Pipe>& pipes, std::map<int, Ks>& stations, int& pres
     cout << "Данные успешно загружены!\n";
 }
 
-void Menu(map<int, Pipe>& pipes, map<int, Ks> &stations) {
-    int pres_id = 0;
-    
+void Menu(map<int, Pipe>& pipes, map<int, Ks> &stations, int& pipes_id, int& stations_id) {
     while (true) {
         cout << "Меню:\n1. Добавить трубу\n2. Добавить КС\n3. Просмотр всех объектов\n4. Поиск\n5. Сохранить\n6. Загрузить\n0. Выход\nВыбор: ";
 
         int choice = Enter<int>();
         switch (choice) {
         case 1:
-            NewPipe(pipes, pres_id);
+            NewPipe(pipes, pipes_id);
             break;
         case 2:
-            NewKs(stations, pres_id);
+            NewKs(stations, stations_id);
             break;
         case 3:
             ShowAll(pipes, stations);
@@ -409,7 +389,7 @@ void Menu(map<int, Pipe>& pipes, map<int, Ks> &stations) {
             SaveData(pipes, stations);
             break;
         case 6:
-            LoadData(pipes, stations, pres_id);
+            LoadData(pipes, stations, pipes_id, stations_id);
             break;
         case 0:
             exit(0);
@@ -421,8 +401,10 @@ int main()
 {
     map<int, Pipe> pipes;
     map<int, Ks> stations;
+    int pipes_id;
+    int stations_id;
 
     setlocale(LC_ALL, "rus");
-    Menu(pipes, stations);
+    Menu(pipes, stations, pipes_id, stations_id);
     return 0;
 }

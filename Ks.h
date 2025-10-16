@@ -5,8 +5,6 @@ class Ks {
 public:
 	Ks();
 	Ks(std::string name, int workshops_count, int workshops_working, std::string type);
-	void show();
-	void fill();
 
 	std::string getName() const { return name; }
 	int getWorkshopsCount() const { return workshops_count; }
@@ -23,3 +21,6 @@ private:
 	int workshops_working;
 	std::string type;
 };
+
+std::ostream& operator<<(std::ostream& os, const Ks& station);
+std::istream& operator>>(std::istream& os, Ks& station);

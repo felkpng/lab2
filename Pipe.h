@@ -1,12 +1,11 @@
 #pragma once
+#include <iostream>
 #include <string>
 
 class Pipe {
 public:
 	Pipe();
 	Pipe(std::string name, float length, int diameter, bool repair);
-	void show();
-	void fill();
 
 	std::string getName() const { return name; }
 	float getLength() const { return length; }
@@ -23,3 +22,6 @@ private:
 	int diameter;
 	bool repair;
 };
+
+std::ostream& operator<<(std::ostream& os, const Pipe& truba);
+std::istream& operator>>(std::istream& os, Pipe& truba);
